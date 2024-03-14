@@ -1,7 +1,10 @@
 package gui;
 
+import java.util.Locale;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JDesktopPane;
@@ -10,6 +13,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -27,6 +31,7 @@ public class MainApplicationFrame extends JFrame
     private final JDesktopPane desktopPane = new JDesktopPane();
     
     public MainApplicationFrame() {
+        Locale.setDefault(new Locale("ru", "RU"));
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
         int inset = 50;        
@@ -95,7 +100,7 @@ public class MainApplicationFrame extends JFrame
 //        return menuBar;
 //    }
     
-    private JMenuBar generateMenuBar()
+    public JMenuBar generateMenuBar()
     {
         JMenuBar menuBar = new JMenuBar();
         
@@ -134,9 +139,20 @@ public class MainApplicationFrame extends JFrame
             });
             testMenu.add(addLogMessageItem);
         }
+        JMenu exitMenu = new JMenu("Выход");
+        exitMenu.setMnemonic(KeyEvent.VK_X);
+        exitMenu.getAccessibleContext().setAccessibleDescription(
+                "Выход из приложения");
+
+        {
+            JMenuItem exitItem = new JMenuItem("Закрыть приложение", KeyEvent.VK_Z);
+            exitItem.addActionListener(this::confirmExit);
+            exitMenu.add(exitItem);
+        }
 
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
+        menuBar.add(exitMenu);
         return menuBar;
     }
     
@@ -153,4 +169,15 @@ public class MainApplicationFrame extends JFrame
             // just ignore
         }
     }
+    public void confirmExit(ActionEvent event) {
+        int option = JOptionPane.showOptionDialog(this,
+                "Вы уверены, что хотите закрыть приложение?", "Подтверждение выхода",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                new String[]{"Да", "Нет"}, "Да");
+
+        if (option == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }
 }
+
